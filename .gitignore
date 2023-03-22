@@ -102,3 +102,8 @@ dist
 
 # TernJS port file
 .tern-port
+
+public/theme/plugins/bootstrap-touchspin/demo/index.html
+ 
+public/theme/plugins/themefisher-font/demo.html
+
