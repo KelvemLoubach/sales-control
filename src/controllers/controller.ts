@@ -82,7 +82,9 @@ export const loginPost = async (req:Request, res:Response) => {
             const showMessageCreateAccount = true;
 
             return res.render('__login',{
-                showMessageCreateAccount
+                showMessageCreateAccount,
+                password,
+                email
             });
 
         } else if(verification instanceof Error){
@@ -101,7 +103,9 @@ export const loginPost = async (req:Request, res:Response) => {
             const noMatchPassword = true;
 
             return res.render('__login',{
-                noMatchPassword
+                noMatchPassword,
+                password,
+                email
             })
         }
     };
