@@ -1,4 +1,5 @@
 import { UserMysql, productsMysql, userInstance } from '../models/modelMysql';
+import Sequelize, {Op, where} from 'sequelize';
 import bcrypt from 'bcrypt';
 
 
@@ -86,12 +87,22 @@ export const creatProducts = async (idUser: string, cost_price: string, product_
 export const listProducts = async (id: string) => {
 
     try{
-    console.log(id + '<--------- id user services')
-
+ 
     const getProducts = await productsMysql.findAll({ where: { UserMysql_id: id, productSold:false} });
 
-    console.log(getProducts + '<------------ services')
-    return getProducts;
+    const productMoreQtd = await productsMysql.findOne({where:{UserMysql_id:id},
+        order: [['qt_itens', 'DESC']],
+        limit: 1
+      });
+
+      const productMoreDear = await productsMysql.findOne({where:{UserMysql_id:id},
+        order: [['product_value', 'DESC']],
+        limit: 1
+      });
+
+    
+    return {getProducts, productMoreQtd,productMoreDear};
+
     } catch(err){
         return new Error('Erro em services.listProducts')
     }
@@ -118,7 +129,35 @@ export const deleteIdProducts = async (id: string) => {
 
 export const productSold = async (id:string) => {
 
-    const sold = await productsMysql.update({productSold:true},{where:{id}})
-console.log(sold[0]+'<============')
- 
-}
+    try{
+        if(id){
+    //const sold = await productsMysql.update({productSoldQtd:true},{where:{id}});
+   const productUpdate = await productsMysql.update(
+        {
+          productSoldQtd: Sequelize.literal('CASE WHEN qt_itens > 0 THEN productSoldQtd + 1 ELSE productSoldQtd END'),  
+          qt_itens: Sequelize.literal('CASE WHEN qt_itens > 0 THEN qt_itens - 1 ELSE 0 END')
+         
+        },
+        {
+          where: { id }
+        }
+      );
+    return productUpdate;
+        }
+    } catch(err){
+        return new Error('Error no services productSold!')
+    }
+};
+
+
+export const getProductSold = async (id:string) => {
+
+    const getAllProductsSold = await productsMysql.findAll({where:{productSoldQtd:{[Op.gt]:0},UserMysql_id:id}});
+
+    const getMoreSold = await productsMysql.findOne({where:{UserMysql_id:id},
+        order: [['productSoldQtd', 'DESC']],
+        limit: 1
+      });
+
+        return {getAllProductsSold, getMoreSold};
+};

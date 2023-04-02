@@ -128,10 +128,10 @@
 				<ul class="nav navbar-nav">
 					<!-- Home -->
 					<li class="dropdown ">
-						<a href="">Cadastro</a>
+						<a href="/products">Cadastro</a>
 					</li><!-- / Home -->
 					<li class="dropdown ">
-						<a href="/productSold">Vendidos</a>
+						<a href="">Vendidos</a>
 					</li><!-- / Home -->
 					<!-- Shop -->			
 				</ul><!-- / .nav .navbar-nav -->
@@ -141,116 +141,50 @@
 	</nav>
 </section>
 
- 
-
 <div class="page-wrapper">
    <div class="checkout shopping">
       <div class="container">
          <div class="row">
             <div class="col-md-8">
-               <div class="block billing-details">
-                  <h4 class="widget-title">CADASTRAR PRODUTOS</h4>
-                  <form class="checkout-form" method="POST" action="/products">
-                     <div class="form-group">
-                        <label for="full_name">DESCRIÇÃO</label>
-                        <input type="text" class="form-control" id="full_name" name="product_description" placeholder="" required>
-                     </div>
-                     <div class="checkout-country-code clearfix">
-                        <div class="form-group">
-                           <label for="user_post_code">CÓDIGO</label>
-                           <input type="number" class="form-control" id="user_post_code" name="product_cod" value="" required>
-                        </div>
-                        <div class="form-group" >
-                           <label for="user_city">VALOR</label>
-                           <input type="number" step="0.01" value="0.00" class="form-control" id="user_city" name="product_value" value="" required>
-                        </div>
-                     </div>
-					 <div class="checkout-country-code clearfix">
-                        <div class="form-group">
-                           <label for="user_post_code">PREÇO DE CUSTO</label>
-                           <input type="number" step="0.01" value="0.00" class="form-control" id="user_post_code" name="cost_price" value="" required>
-                        </div>
-                        <div class="form-group" >
-                           <label for="user_city">QUANTIDADE</label>
-                           <input type="number" class="form-control" id="user_city" name="qt_itens" value="" required>
-                        </div>
-                     </div>
-					  <button type="submit"   class="btn btn-main text-center">CADASTRAR</button>
-                  </form>
-				  
-	
-
-               </div>
-               <div class="block">
-                  <h4 class="widget-title">PRODUTOS CADASTRADOS</h4>
-                  
-                  <div class="checkout-product-details">
-
-                 
-					<!-- lISTA PARA EXIBIR OS PRODUTOS AQUI -->
-					
-                    <table>
+                <div class="product-checkout-details">
+                  <div class="block">
+				    <h4 class="widget-title">PRODUTOS VENDIDOS</h4>
+                <table id="tableSold">
 							<thead>
 								<tr>
 								<th>PRODUTO </th>
+								<th>CÓDIGO</th>
 								<th>PREÇO CUSTO </th>
 								<th>PREÇO VENDA  </th>
 								<th>QUANTIDADE</th>
-								<th>CÓDIGO</th>
-								<th>EXCLUIR</th>
-                                <th>VENDIDO</th>
+								
+								
 								</tr>
 							</thead>
 							<tbody>
-								{{#products}}
+								{{#getAllProductsSold}}
 								<tr>
-									<td>{{product_description}}</td>
+									<td style="padding: 0 30px 0 5px";>{{product_description}}</td>
+									<td>{{product_cod}}</td>	
 									<td>{{cost_price}}</td>
 									<td>{{product_value}}</td>
-									<td>{{qt_itens}}</td>
-									<td>{{product_cod}}</td>									
+									<td>{{productSoldQtd}}</td>
+																	
 									<td>
-									<form action="/delete-product" method="POST">
-									<input type="hidden" name="id" value="{{id}}">
-									<button type="submit" style="color: red; padding: 0 30px 0 30px;"class="btn-delete">X</button>
-									</form>
 								    </td>
-
-									<td>
-									<form action="/mark-product-sold/{{id}}" method="POST">
-									<input type="hidden" >
-									<button type="submit" style="color: green; padding: 0 30px 0 30px;" name="sold" class="btn-sold">OK</button>
-									</form>
-								    </td>
-                                   
 								</tr>
-								{{/products}}
+								{{/getAllProductsSold}}
 							</tbody>
 							</table>
 
                   </div>
                </div>
+               
             </div>
 
 		{{! ----------------------------------------------------------------------------------------------------- }}
-			{{#showModal}}
-			<div class="modal123" id="" tabindex="-1" role="">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-body">
-						<form action="">
-							<div class="form-group">
-								<input class="form-control" name="qtdSold" type="number" placeholder="Qual a quantidade vendida?">
-							</div>
-							<button type="submit" class="btn btn-main">Confimar</button>
-						</form>
-						</div>
-					</div>
-				</div>
-			</div>
-   {{/showModal}}
 
-			<div class="col-md-4">
+				<div class="col-md-4">
                <div class="product-checkout-details">
                  <div class="block">
                      <h4 class="widget-title">RESUMO DAS VENDAS</h4>
@@ -265,14 +199,14 @@
                      </div>
                      <ul class="summary-prices">
                         <li>
-                           <span>PRODUTO COM MAIOR QUANTIDADE</span>
-                           <span class="price">{{#productMoreQtd}} {{product_description}} {{/productMoreQtd}}</span>
+                           <span>PRODUTOS MAIS VENDIDO</span>
+                           <span class="price">{{#getMoreSold}} {{product_description}} {{/getMoreSold}}</span>
                         </li>
                         
                      </ul>
                      <div class="summary-total">
-                        <span>PRODUTO MAIS CARO </span>
-                        <span>{{#productMoreDear}} {{product_value}} {{/productMoreDear}}</span>
+                        <span>TOTAL DE UNIDADES</span>
+                        <span>{{#getMoreSold}} {{productSoldQtd}} {{/getMoreSold}}</span>
                      </div>
                      <div class="verified-icon">
                         <img src="">
@@ -286,10 +220,21 @@
       </div>
    </div>
 </div>
-
-
    <!-- Modal -->
-  
+   {{! <div class="" id="" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+         <div class="modal-content">
+            <div class="modal-body">
+               <form>
+                  <div class="form-group">
+                     <input class="form-control" type="text" placeholder="Enter Coupon Code">
+                  </div>
+                  <button type="submit" class="btn btn-main">Apply Coupon</button>
+               </form>
+            </div>
+         </div>
+      </div>
+   </div> }}
    
 <footer class="footer section text-center">
 	<div class="container">

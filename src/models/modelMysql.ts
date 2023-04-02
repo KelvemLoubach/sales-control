@@ -83,6 +83,11 @@ export const productsMysql = sequelizeMysqlConection.define<productsInstances>('
         defaultValue:false
     },
 
+    productSoldQtd:{
+        type:DataTypes.INTEGER,
+        defaultValue:0
+    },
+
     UserMysql_id:{
         type:DataTypes.NUMBER,
         references: {
