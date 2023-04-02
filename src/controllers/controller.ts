@@ -9,6 +9,19 @@ export const home = (req: Request, res: Response) => {
     res.render('__login')
 };
 
+
+//----------------------------------------------------------------------------//
+
+export const logout = (req:Request, res:Response) => {
+    res.clearCookie('token');
+    return res.redirect('/login');
+};
+
+
+
+
+
+
 //----------------------------------------------------------------------------//
 
 export const products = async (req: Request, res: Response) => {

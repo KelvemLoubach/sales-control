@@ -111,6 +111,7 @@
 <section class="menu">
 	<nav class="navbar navigation">
 		<div class="container">
+			<a href="/logout">Sair</a>
 			<div class="navbar-header">
 				<h2 class="menu-title">Main Menu</h2>
 				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
@@ -127,16 +128,21 @@
 			<div id="navbar" class="navbar-collapse collapse text-center">
 				<ul class="nav navbar-nav">
 					<!-- Home -->
+					
 					<li class="dropdown ">
 						<a href="">Cadastro</a>
 					</li><!-- / Home -->
 					<li class="dropdown ">
 						<a href="/productSold">Vendidos</a>
-					</li><!-- / Home -->
+					</li>
+					<li class="dropdown ">
+					
+					</li>
 					<!-- Shop -->			
 				</ul><!-- / .nav .navbar-nav -->
 			</div>
-			<!--/.navbar-collapse -->
+			
+				
 		</div><!-- / .container -->
 	</nav>
 </section>
@@ -193,9 +199,9 @@
 							<thead>
 								<tr>
 								<th>PRODUTO </th>
-								<th>PREÇO CUSTO </th>
+								
 								<th>PREÇO VENDA  </th>
-								<th>QUANTIDADE</th>
+								<th>QTD</th>
 								<th>CÓDIGO</th>
 								<th>EXCLUIR</th>
                                 <th>VENDIDO</th>
@@ -205,21 +211,20 @@
 								{{#products}}
 								<tr>
 									<td>{{product_description}}</td>
-									<td>{{cost_price}}</td>
 									<td>{{product_value}}</td>
 									<td>{{qt_itens}}</td>
 									<td>{{product_cod}}</td>									
 									<td>
 									<form action="/delete-product" method="POST">
 									<input type="hidden" name="id" value="{{id}}">
-									<button type="submit" style="color: red; padding: 0 30px 0 30px;"class="btn-delete">X</button>
+									<button type="submit" style="color: red; padding: 0 10px 0 10px;"class="btn-delete">X</button>
 									</form>
 								    </td>
 
 									<td>
 									<form action="/mark-product-sold/{{id}}" method="POST">
 									<input type="hidden" >
-									<button type="submit" style="color: green; padding: 0 30px 0 30px;" name="sold" class="btn-sold">OK</button>
+									<button type="submit" style="color: green; padding: 0 10px 0 10px;" name="sold" class="btn-sold">OK</button>
 									</form>
 								    </td>
                                    

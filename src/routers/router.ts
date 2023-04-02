@@ -8,7 +8,8 @@ router.get('/', controller.home);
 router.get('/signup', controller.signup);
 router.get('/products', checkAccess, controller.products);
 router.get('/login', controller.login);
-router.get('/productSold', checkAccess, controller.soldProduct)
+router.get('/productSold', checkAccess, controller.soldProduct);
+router.get('/logout', controller.logout)
 
 router.post('/signup', controller.signupPost);
 router.post('/login', controller.loginPost);
