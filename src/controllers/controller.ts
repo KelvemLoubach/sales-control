@@ -203,6 +203,6 @@ export const productSold = async (req: Request, res: Response) => {
 
     const { id } = req.params;
     await services.productSold(id);
-
+    console.log(id+'<================== id')
     return res.redirect('/products');
 };

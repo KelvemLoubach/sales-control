@@ -131,8 +131,8 @@ export const productSold = async (id:string) => {
 
     try{
         if(id){
-    //const sold = await productsMysql.update({productSoldQtd:true},{where:{id}});
-   const productUpdate = await productsMysql.update(
+            console.log(id+'id<======================== services')
+     const productUpdate = await productsMysql.update(
         {
           productSoldQtd: Sequelize.literal('CASE WHEN qt_itens > 0 THEN productSoldQtd + 1 ELSE productSoldQtd END'),  
           qt_itens: Sequelize.literal('CASE WHEN qt_itens > 0 THEN qt_itens - 1 ELSE 0 END')
@@ -142,6 +142,7 @@ export const productSold = async (id:string) => {
           where: { id }
         }
       );
+     
     return productUpdate;
         }
     } catch(err){

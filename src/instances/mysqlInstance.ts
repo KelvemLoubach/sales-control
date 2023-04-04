@@ -7,7 +7,7 @@ export  const sequelizeMysqlConection = new Sequelize(
      process.env.MYSQL_USER as string,
      process.env.MYSQL_PASSWORD as string,
     {
-        dialect:'mysql',
+        dialect:'postgres',
         port: parseInt(process.env.MYSQL_PORT as string)
     } ,  
 );

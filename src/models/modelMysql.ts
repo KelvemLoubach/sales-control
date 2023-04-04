@@ -12,7 +12,7 @@ export interface userInstance extends Model {
 
 export const UserMysql = sequelizeMysqlConection.define<userInstance>('createUser', {
     id:{
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER,
         autoIncrement:true,
         primaryKey:true
     },
@@ -89,7 +89,7 @@ export const productsMysql = sequelizeMysqlConection.define<productsInstances>('
     },
 
     UserMysql_id:{
-        type:DataTypes.NUMBER,
+        type:DataTypes.INTEGER,
         references: {
           model: UserMysql,
           key: 'id'
@@ -104,3 +104,6 @@ export const productsMysql = sequelizeMysqlConection.define<productsInstances>('
 
 UserMysql.hasMany(productsMysql, { foreignKey: 'UserMysql_id' });
 productsMysql.belongsTo(UserMysql, { foreignKey: 'UserMysql_id' });
+
+UserMysql.sync();
+productsMysql.sync();
