@@ -1,19 +1,18 @@
 import dotenv from 'dotenv';
 import {Sequelize} from 'sequelize';
+import database from './database'
+
 dotenv.config()
 
-export  const sequelizeMysqlConection = new Sequelize(
+export  const sequelizeMysqlConection =  new Sequelize(
 
-    process.env.DB_URL as string,
-
-
-//      process.env.MYSQL_DB as string,
-//      process.env.MYSQL_USER as string,
-//      process.env.MYSQL_PASSWORD as string,
+     database.database,
+     database.user,
+     database.password,
 
     {
-        dialect:'postgres'
-       
+        dialect:'mysql',
+        port:parseInt(database.port)
     }   
 );
 

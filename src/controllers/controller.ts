@@ -1,88 +1,55 @@
 import { Request, Response } from "express";
 import * as services from '../services/userServices';
+import { tokenJwt } from "../middleware";
+import { productsInstances, userInstance } from '../models/modelMysql';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 
 dotenv.config();
 
+
 export const home = (req: Request, res: Response) => {
-    res.render('__login')
+    return res.status(200).json({ OK: 'Página home!' })
 };
 
 
 //----------------------------------------------------------------------------//
 
-export const logout = (req:Request, res:Response) => {
+export const logout = (req: Request, res: Response) => {
     res.clearCookie('token');
-    return res.redirect('/login');
+    return res.status(200).json({OK: `Você saiu!`})
 };
-
-
-
-
 
 
 //----------------------------------------------------------------------------//
 
 export const products = async (req: Request, res: Response) => {
 
-    const idUser = jwt.verify(req.cookies.token, process.env.JWT_SECRET_KEY as string);
+    const id = tokenJwt(req, res) as number;
+  
+    const productsData = await services.listProducts(id);
 
-    if (typeof idUser === 'string') {
-        throw new Error('Token inválido');
-    };
+    if (!(productsData instanceof Error)) {
 
-    const productsData = await services.listProducts(idUser.id);
+        return res.status(200).json({ OK: `Seus produtos cadastrados: ${productsData.getProducts.length}` })
 
-    if(!(productsData instanceof Error)){
-
-    return res.render('__checkout', {
-        products: productsData.getProducts,
-        productMoreQtd: productsData.productMoreQtd,
-        productMoreDear: productsData.productMoreDear
-     })
-    }else{
+    } else {
         return new Error('ERRO EM PRODUCTS')
     }
 };
 
-//----------------------------------------------------------------------------//
-
-export const login = (req: Request, res: Response) => {
-
-    res.render('__login');
-};
 
 //----------------------------------------------------------------------------//
 
-export const signup = (req: Request, res: Response) => {
-    const { email, password } = req.body;
-    res.render('__newAccount', {
-        email,
-        password
-    })
-};
-
-//---------------------------------------------------------------------------//
 
 export const soldProduct = async (req: Request, res: Response) => {
 
-    const idUser = jwt.verify(req.cookies.token, process.env.JWT_SECRET_KEY as string);
+    const id = tokenJwt(req, res) as number;
 
-    if (typeof idUser === 'string') {
-        throw new Error('Token inválido');
-    };;
+    const DataReturnProductSold = await services.getProductSold(id);
+    const allProductsDescription = DataReturnProductSold.getAllProductsSold.map( item => item.product_description);
 
-
-    const DataReturnProductSold = await services.getProductSold(idUser.id);
-    
-
-    return res.render('__productSold', {
-        getAllProductsSold: DataReturnProductSold.getAllProductsSold,
-        getMoreSold: DataReturnProductSold.getMoreSold
-        
-    });
-
+    return res.status(200).json({OK: `Produtos vendidos: ${allProductsDescription.join(' - ')} `});
 };
 
 //----------------------------------------------------------------------------//
@@ -90,21 +57,24 @@ export const soldProduct = async (req: Request, res: Response) => {
 export const productsPost = async (req: Request, res: Response) => {
 
     try {
-        const { cost_price, product_value, product_description, qt_itens, product_cod } = req.body;
-        const idUser = jwt.verify(req.cookies.token, process.env.JWT_SECRET_KEY as string);
+        const { cost_price, product_value, product_description, qt_itens, product_cod } = req.body as productsInstances;
 
-        if (typeof idUser === 'string') {
-            throw new Error('Token inválido');
-        };
+        const id = tokenJwt(req, res) as number;
+        
+        if (typeof id !== undefined) {
 
+            const products = await services.creatProducts(id, cost_price, product_value, product_description, qt_itens, product_cod);
 
-        await services.creatProducts(idUser.id, cost_price, product_value, product_description, qt_itens, product_cod);
-
-        return res.redirect('/products');
-
+            if( !(products instanceof Error)){
+                return res.status(201).json({ OK: `Produtos criados: ${products.product_description}` });
+            }
+           
+        } else {
+            return res.status(401).json({ ERROR: `erro em products post` })
+        }
 
     } catch (err) {
-        res.redirect('/login')
+        return res.status(500).json({ ERROR: `${err}` })
     }
 
 };
@@ -115,9 +85,7 @@ export const productsPost = async (req: Request, res: Response) => {
 export const loginPost = async (req: Request, res: Response) => {
 
     try {
-
-        const { email, password } = req.body;
-        console.log(email, password + '<---------------- email password')
+        const { email, password } = req.body as userInstance;
 
         if (email && password) {
 
@@ -125,41 +93,26 @@ export const loginPost = async (req: Request, res: Response) => {
 
             if (verification === null || verification === undefined) {
 
-                const showMessageCreateAccount = true;
+                return res.status(401).json({ OK: 'Usuário não cadastrado!' })
 
-                return res.render('__login', {
-                    showMessageCreateAccount,
-                    password,
-                    email
-                });
-
-            } else if (verification instanceof Error) {
-
-                return res.status(400).send(`Error --> ${Error}`)
-            }
-            else if (verification?.matchPassword) {
+            } 
+            else if (verification.matchPassword as boolean) {
 
                 const token = jwt.sign({ id: verification.id }, process.env.JWT_SECRET_KEY as string)
-                console.log(token);
+            
+                res.cookie('token', token, { httpOnly: true, secure: true, maxAge: 60000 * 1 }); // Token válido por 1 minuto!
 
-                res.cookie('token', token, { httpOnly: true, secure: true, maxAge: 60000 * 15 }); // Token válido por 15 minutos!
-
-                return res.redirect('/products');
+                return res.status(201).json({ OK: ` Login post correto! TOKEN ${token}` })
             } else {
-                const noMatchPassword = true;
 
-                return res.render('__login', {
-                    noMatchPassword,
-                    password,
-                    email
-                })
+                return res.status(401).json({ ERROR: 'ERROR login post, password or email incorrect' })
             }
         };
 
-        return res.send('ERROR aqui')
+        return res.status(400).json({ ERROR: 'Email or password not existing' })
 
     } catch (err) {
-        return new Error('Erro no controller, função de login! ')
+        return new Error('Erro no controller, função de login! ' + err)
     };
 
 };
@@ -168,33 +121,52 @@ export const loginPost = async (req: Request, res: Response) => {
 
 export const signupPost = async (req: Request, res: Response) => {
 
-    const { firstName, lastName, email, password } = req.body;
+    const { firstName, lastName, email, password } = req.body as userInstance;
 
     try {
         const verification = await services.serviceCreateUser(firstName, lastName, email, password);
 
-        if (!verification) {
-            return res.redirect('/');
+        if (verification === undefined) {
+
+            return res.status(500).json({ ERROR: 'erro interno!' });
+
         } else {
-            return res.redirect('/products')
-        }
+
+            if (verification.create === false) {
+                return res.status(200).json({ OK: `Usuário já existe: ${verification.newUser.email}` });
+            } else {
+
+                return res.status(201).json({ OK: `Usuário criado com sucesso: ${verification.newUser.email}` });
+            };
+        };
     }
 
     catch (err) {
-        return res.json({ Error: 'Preencha os campos!' });
-    }
+        return res.status(400).json({ Error: 'Preencha os campos!' });
+    };
 };
 
 //-----------------------------------------------------------------------------//
 
 
 export const deleteProducts = async (req: Request, res: Response) => {
-    const idProducts = req.body.id;
+    
+    if(req.params.id){
 
-    console.log(idProducts + '<------------------ id');
+    const idProducts = req.params.id as string;
 
-    await services.deleteIdProducts(idProducts);
-    return res.redirect('/products');
+    let product = await services.deleteIdProducts(idProducts);
+  
+    if(product > 0){
+
+    return res.status(200).json({OK: `Produto deletado!`})
+
+    }else{
+        return res.status(200).json({OK: `Produto já deletado!`})
+    }
+    }else{
+        return res.status(200).json({ERROR: `Produto não encontrado!`})
+    }
 };
 
 //------------------------------------------------------------------------------//
@@ -202,7 +174,21 @@ export const deleteProducts = async (req: Request, res: Response) => {
 export const productSold = async (req: Request, res: Response) => {
 
     const { id } = req.params;
-    await services.productSold(id);
-    console.log(id+'<============id')
-    return res.redirect('/products');
+
+    const product = await services.productSold(id);
+    
+    if(  product instanceof Array ){
+
+    const affected = product[1];
+
+    if(affected){
+       
+        return res.status(201).json({OK: `${affected} produto marcado como vendido!`});
+
+    }else {
+        return res.status(404).json({ error: 'Produto não encontrado' });
+      }  
+    }else {
+        return res.status(200).json({OK: `Error`})
+    }
 };
