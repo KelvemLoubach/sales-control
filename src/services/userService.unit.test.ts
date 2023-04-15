@@ -13,7 +13,8 @@ describe('Inserting, retrieving and manipulating data in the database', () => {
         firstName:'Kelvem',
         lastName: 'Loubach',
         email: 'kelvemloubach@outlook.com',
-        password: '123456789'
+        password: '123456789',
+        id: 1
     };
 
     let productsTest = {
@@ -63,6 +64,17 @@ describe('Inserting, retrieving and manipulating data in the database', () => {
         expect(products).not.toBeInstanceOf(Error);
     });
 
+    // Teste para função listProducts
+    it('Must return an instance of products.', async () => {
+        const Products = await servicesDatabase.listProducts(userDataTest.id);
+      
+        expect(Products).not.toBeInstanceOf(Error);
+        expect(Products).toHaveProperty('getProducts');
+        expect(Products).toHaveProperty('productMoreDear');
+    });
+
+
+    
 
     afterAll(async () => {
         await productsMysql.drop();
