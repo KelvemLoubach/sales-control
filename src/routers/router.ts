@@ -1,6 +1,6 @@
 import { Router, Request, Response} from "express";
 import * as controller from '../controllers/controller';
-import { checkAccess } from "../middleware";
+import { checkAccess } from "../middlewares/middleware";
 
 const router = Router();
 

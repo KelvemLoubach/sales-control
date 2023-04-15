@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import * as services from '../services/userServices';
-import { tokenJwt } from "../middleware";
+import { tokenJwt } from "../middlewares/middleware";
 import { productsInstances, userInstance } from '../models/modelMysql';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
