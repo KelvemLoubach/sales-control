@@ -2,13 +2,16 @@
 Sales Control API
 Esta é uma API RESTful para controle de vendas e gerenciamento de produtos e clientes.
 
-Tecnologias Utilizadas
+Tecnologias Utilizadas: 
+
 Node.js
+TypeScript
 Express
+Sequelize
 Mysql
 Autenticação e autorização com JWT
 
-Instalação
+Instalação:
 Clone este repositório para o seu ambiente de desenvolvimento local.
 Execute npm install para instalar todas as dependências.
 Crie um arquivo .env na raiz do projeto com as seguintes informações:
@@ -20,28 +23,22 @@ Execute npm start para iniciar o servidor.
 Endpoints
 A API possui os seguintes endpoints:
 
-GET /home
-Retorna um json com a string: Página home.
+GET /
+Retorna um objeto json com a string: Página home.
 
-GET /produtos/:id
-Retorna um produto específico com base no ID fornecido.
+GET /products
+Retorna a quantidade de produtos cadastrados do cliente que está logado.
 
-POST /produtos
-Cria um novo produto.
+GET /logout
+Retorna um objeto json com a string: Você saiu!
 
-PUT /produtos/:id
-Atualiza um produto existente com base no ID fornecido.
+GET /productSold
+Retorna um objeto json com a string dos produtos vendidos do usuário logado.
 
-DELETE /produtos/:id
-Exclui um produto específico com base no ID fornecido.
+POST /signup
+Verifica de existe algum usuário cadastrado com o email informado, se sim, retorna um objeto json com o email do usuário.
+Se não existir um usuário cadastrado com o email fornecido retornará um objeto json com a string: Usuário criado com sucesso e o email cadastrado.
 
-
-POST /clientes
-Cria um novo cliente.
-
-
-DELETE /clientes/:id
-Exclui um cliente específico com base no ID fornecido.
 
 
 Contribuindo
