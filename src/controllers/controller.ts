@@ -58,12 +58,13 @@ export const productsPost = async (req: Request, res: Response) => {
 
     try {
         const { cost_price, product_value, product_description, qt_itens, product_cod } = req.body as productsInstances;
+        const description = product_description.toLowerCase();
 
         const id = tokenJwt(req, res) as number;
         
         if (typeof id !== undefined) {
 
-            const products = await services.creatProducts(id, cost_price, product_value, product_description, qt_itens, product_cod);
+            const products = await services.creatProducts(id, cost_price, product_value, description, qt_itens, product_cod);
 
             if( !(products instanceof Error)){
                 return res.status(201).json({ OK: `Produtos criados: ${products.product_description}` });
@@ -86,10 +87,11 @@ export const loginPost = async (req: Request, res: Response) => {
 
     try {
         const { email, password } = req.body as userInstance;
+        const emailLower = email.toLowerCase();
 
-        if (email && password) {
+        if (emailLower && password) {
 
-            const verification = await services.login(email, password);
+            const verification = await services.login(emailLower, password);
 
             if (verification === null || verification === undefined) {
 
@@ -122,7 +124,7 @@ export const loginPost = async (req: Request, res: Response) => {
 export const signupPost = async (req: Request, res: Response) => {
 
     const { firstName, lastName, email, password } = req.body as userInstance;
-
+   
     try {
         const verification = await services.serviceCreateUser(firstName, lastName, email, password);
 
