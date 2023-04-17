@@ -11,6 +11,7 @@ TypeScript,
 Express,
 Sequelize,
 Mysql,
+Jest,
 Autenticação e autorização com JWT
 
 Instalação:
