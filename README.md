@@ -6,11 +6,11 @@ Esta é uma API RESTful para controle de vendas e gerenciamento de produtos e cl
 
 Tecnologias Utilizadas: 
 
-Node.js
-TypeScript
-Express
-Sequelize
-Mysql
+Node.js,
+TypeScript,
+Express,
+Sequelize,
+Mysql,
 Autenticação e autorização com JWT
 
 Instalação:
