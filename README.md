@@ -1,5 +1,7 @@
-# sales-control
+# sales-control #
+
 Sales Control API
+
 Esta é uma API RESTful para controle de vendas e gerenciamento de produtos e clientes.
 
 Tecnologias Utilizadas: 
