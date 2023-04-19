@@ -1,19 +1,20 @@
-import { Router, Request, Response} from "express";
-import * as controller from '../controllers/controller';
+import { Router } from "express";
+import * as user from '../controllers/controller';
+import * as products from '../controllers/controllerProducts';
 import { checkAccess } from "../middlewares/middleware";
 
 const router = Router();
 
-router.get('/', controller.home);
-router.get('/products', checkAccess, controller.products);
-router.get('/productSold', checkAccess, controller.soldProduct);
-router.get('/logout', controller.logout)
+router.get('/', user.home);
+router.get('/products', checkAccess, products.products);
+router.get('/productSold', checkAccess, products.soldProduct);
+router.get('/logout', user.logout)
 
-router.post('/signup', controller.signupPost);
-router.post('/login', controller.loginPost);
-router.post('/products',controller.productsPost);
-router.delete('/delete-product/:id',checkAccess, controller.deleteProducts);
-router.put('/mark-product-sold/:id',checkAccess, controller.productSold);
+router.post('/signup', user.signupPost);
+router.post('/login', user.loginPost);
+router.post('/products',products.productsPost);
+router.delete('/delete-product/:id',checkAccess, products.deleteProducts);
+router.put('/mark-product-sold/:id',checkAccess, products.productSold);
 
 
 export default router;
